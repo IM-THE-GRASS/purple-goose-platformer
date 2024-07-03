@@ -8,7 +8,7 @@ font = pygame.font.SysFont("times new roman", 32, bold=True)
 running = True
 screen_width = 700
 screen_height = 700
-screen = pygame.display.set_mode((700, 700))
+screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("goobse")
 
 class button:   
@@ -33,7 +33,11 @@ class button:
             surface = font.render(self.text, False, BLACK)
         elif self.type == "image":
             surface = pygame.image.load(self.image_path)
+            
             surface = pygame.transform.scale(surface, (self.width,self.height))
+            surface.convert_alpha()
+            surface.set_colorkey((255,255,255))
+
         screen.blit(surface, (self.x, self.y))
         if self.rect.collidepoint(mouse_x, mouse_y) and click:
             click_function()
@@ -58,14 +62,20 @@ while running:
         print("quit")
         pygame.quit()
     
+    def on_settings():
+        print("settings")
+    
+    screen.fill(BLACK)
     
     play_button = button(25, 25, 500, 125, "image", image_path=os.path.join('images', 'play.png'))
-    quit_button = button(25, 150, 500, 125, "image", image_path=os.path.join('images', 'quit.png'))
+    settings_button = button(25, 150, 500, 125, "image", image_path=os.path.join("images", "settings.png"))
+    quit_button = button(25, 275, 500, 125, "image", image_path=os.path.join('images', 'quit.png'))
     
 
 
 
     play_button.draw(on_play)
+    settings_button.draw(on_settings)
     quit_button.draw(on_quit)
 
     pygame.display.flip()
