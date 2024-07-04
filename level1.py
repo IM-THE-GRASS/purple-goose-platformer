@@ -11,12 +11,18 @@ font = pygame.font.SysFont("times new roman", 32, bold=True)
 running = True
 screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("goobse")
-
+gravity = 0.01
 player_img = os.path.join("images", "goose.png")
-theplayer = player.player(25,25,player_img)
-
+player = player.player(25,25,player_img)
+player.yvelocity = 0.01
+w = pygame.K_w
+a = pygame.K_a
+s = pygame.K_s
+d = pygame.K_d
+space = pygame.K_SPACE
 def main():
     while running:
+        player.yvelocity = player.yvelocity + 0.001
         click = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -26,10 +32,31 @@ def main():
                 click = "down"
             if event.type == pygame.MOUSEBUTTONUP:
                 click = "up"
-        mouse_pos = pygame.mouse.get_pos()
-        print("sfhaiudfhiu")
+            if event.type == pygame.KEYUP:
+                if event.key == w:
+                    pass
+                if event.key == a:
+                    player.xvelocity = player.xvelocity + 0.5
+                if event.key == s:
+                    pass
+                if event.key == d:
+                    player.xvelocity = player.xvelocity - 0.5
+                if event.key == space:
+                    player.yvelocity = 0
+                
+        mouse_pos = pygame.mouse.get_pos()        
+        keys_pressed = pygame.key.get_pressed()
         
-        
+        if keys_pressed[w]:
+            print("asdsdadas")
+        if keys_pressed[a]:
+            player.xvelocity = -0.5
+        if keys_pressed[s]:
+            pass
+        if keys_pressed[d]:
+            player.xvelocity = 0.5
+        if keys_pressed[space]:
+            player.yvelocity = gravity + 0.001
         screen.fill(BLACK)
-        theplayer.draw(screen)
+        player.draw(screen)
         pygame.display.flip()
