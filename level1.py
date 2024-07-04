@@ -11,18 +11,21 @@ font = pygame.font.SysFont("times new roman", 32, bold=True)
 running = True
 screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("goobse")
-gravity = 0.01
+gravity = 0.001
 player_img = os.path.join("images", "goose.png")
 player = player.player(25,25,player_img)
-player.yvelocity = 0.01
+player.yvelocity = 0.001
 w = pygame.K_w
 a = pygame.K_a
 s = pygame.K_s
 d = pygame.K_d
 space = pygame.K_SPACE
+clock = pygame.time.Clock()
+frames_since_last_jump = 99
 def main():
     while running:
-        player.yvelocity = player.yvelocity + 0.001
+        clock.tick(60)
+        player.yvelocity = player.yvelocity + gravity
         click = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -55,8 +58,19 @@ def main():
             pass
         if keys_pressed[d]:
             player.xvelocity = 0.5
-        if keys_pressed[space]:
-            player.yvelocity = gravity + 0.001
+        if keys_pressed[space] and frames_since_last_jump > 40:
+            frames_since_last_jump = 0
+            player.yvelocity = gravity - 0.5
+            
         screen.fill(BLACK)
+        print(player.yvelocity)
+        platform = pygame.Rect(0,500,500,50)
+        pygame.draw.rect(screen,(255,255,255),platform)
+        if player.rect.colliderect(platform):
+            frames_since_last_jump = 99
+            print(player.yvelocity)
+            if player.yvelocity > 0:
+                
+                player.yvelocity = 0
         player.draw(screen)
         pygame.display.flip()
