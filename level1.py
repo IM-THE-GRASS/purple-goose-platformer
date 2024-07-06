@@ -1,6 +1,7 @@
 import pygame
 import player
 import os
+import block
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 pygame.init()
@@ -11,9 +12,9 @@ font = pygame.font.SysFont("times new roman", 32, bold=True)
 running = True
 screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("goobse")
-gravity = 0.6
+gravity = 2
 player_img = os.path.join("images", "goose.png")
-player = player.player(25,25,player_img)
+player = player.player(25,25,player_img, 50,50)
 player.yvelocity = 0
 w = pygame.K_w
 a = pygame.K_a
@@ -65,13 +66,14 @@ def main():
             
         screen.fill(BLACK)
         print(player.yvelocity)
-        platform = pygame.Rect(0,500,500,50)
-        pygame.draw.rect(screen,(255,255,255),platform)
-        if player.rect.colliderect(platform):
+        platform = block.Block(WHITE, 500, 50 ,0, 500)
+        platform.update(screen )
+        #pygame.draw.rect(screen,(255,255,255),platform)
+        if player.rect.colliderect(platform.rect):
             JumpCounter = 999
             print(player.yvelocity)
             if player.yvelocity > 0:
                 
                 player.yvelocity = 0
-        player.draw(screen)
+        player.update(screen)
         pygame.display.flip()
