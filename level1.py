@@ -14,20 +14,23 @@ screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("goobse")
 gravity = 2
 player_img = os.path.join("images", "goose.png")
-player = player.player(25,25,player_img, 50,50)
-player.yvelocity = 0
+current_player = player.player(25,25,player_img, 50,50)
+current_player.yvelocity = 0
 w = pygame.K_w
 a = pygame.K_a
 s = pygame.K_s
 d = pygame.K_d
+platforms = pygame.sprite.Group()
 space = pygame.K_SPACE
 clock = pygame.time.Clock()
 def main():
+    platform = block.Block(WHITE, 500, 50 ,0, 500)
+    platforms.add(platform)
     JumpCounter = 999
     print(a)
     while running:
         clock.tick(60)
-        player.yvelocity = player.yvelocity + gravity
+        current_player.yvelocity = current_player.yvelocity + gravity
         click = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -41,13 +44,15 @@ def main():
                 if event.key == w:
                     pass
                 if event.key == a:
-                    player.xvelocity = player.xvelocity + 10
+                    current_player.xvelocity = current_player.xvelocity + 10
+                    pygame.transform.flip(current_player.player_img, True, False)
                 if event.key == s:
                     pass
                 if event.key == d:
-                    player.xvelocity = player.xvelocity - 10
+                    current_player.xvelocity = current_player.xvelocity - 10
+                    pygame.transform.flip(current_player.player_img, True, False)
                 if event.key == space:
-                    player.yvelocity = 0
+                    current_player.yvelocity = 0
         JumpCounter = JumpCounter + 1
         mouse_pos = pygame.mouse.get_pos()        
         keys_pressed = pygame.key.get_pressed()
@@ -55,25 +60,31 @@ def main():
         if keys_pressed[w]:
             print("asdsdadas")
         if keys_pressed[a]:
-            player.xvelocity = -10
+            current_player.xvelocity = -10
         if keys_pressed[s]:
             pass
         if keys_pressed[d]:
-            player.xvelocity = 10
+            current_player.xvelocity = 10
         if keys_pressed[space] and JumpCounter > 200:
             JumpCounter = 1
-            player.yvelocity = gravity - 24
+            current_player.yvelocity = gravity - 24
             
         screen.fill(BLACK)
-        print(player.yvelocity)
-        platform = block.Block(WHITE, 500, 50 ,0, 500)
-        platform.update(screen )
-        #pygame.draw.rect(screen,(255,255,255),platform)
-        if player.rect.colliderect(platform.rect):
+        
+        
+        spritecollided = pygame.sprite.spritecollideany(current_player, platforms)
+        if spritecollided != None:
+            sprite_pos = spritecollided.rect.topleft
+            print(current_player.rect.y, sprite_pos[1])
+            print(current_player.rect.y < sprite_pos[1])
+            if current_player.y < sprite_pos[1]:
+                current_player.y = 500 - spritecollided.rect.h
+                print(spritecollided.rect.h)
             JumpCounter = 999
-            print(player.yvelocity)
-            if player.yvelocity > 0:
+            if current_player.yvelocity > 0:
                 
-                player.yvelocity = 0
-        player.update(screen)
+                current_player.yvelocity = 0
+        current_player.update(screen)
+        platforms.update()
+        platforms.draw(screen)
         pygame.display.flip()

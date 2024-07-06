@@ -3,12 +3,12 @@ import pygame
 
 class Block(pygame.sprite.Sprite):
 
-    def __init__(self, color, width, height, centerx, centery):
+    def __init__(self, color, width, height, left, top):
        pygame.sprite.Sprite.__init__(self)
-       self.pos = (centerx,centery)
+       self.pos = (left,top)
        self.image = pygame.Surface([width, height])
        self.color = color
-       self.rect = self.image.get_rect(centerx = centerx, centery = centery)
        self.image.fill(color)
-    def update(self, screen):
-        pygame.Surface.blit(screen, self.image, self.pos)
+       self.rect = self.image.get_rect()
+    def update(self):
+        self.rect.topleft = self.pos
