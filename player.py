@@ -7,13 +7,20 @@ class player(pygame.sprite.Sprite):
         self.y = y
         self.color = color
         self.size = (width, height)
+        self.mobile = True
         self.yvelocity = 0
         self.xvelocity = 0
-        self.player_img = pygame.image.load(player_img_path).convert_alpha()
-        self.player_img = pygame.transform.scale(self.player_img, self.size)
-        self.rect = self.player_img.get_rect(topleft=(self.x, self.y))
+        self.direction = "left"
+        self.l_img = pygame.image.load(player_img_path).convert_alpha()
+        self.l_img = pygame.transform.scale(self.l_img, self.size)
+        self.r_img = pygame.transform.flip(self.l_img,True,False)
+        self.rect = self.l_img.get_rect(topleft=(self.x, self.y))
     def update(self, screen):
-        self.x = self.x + self.xvelocity
-        self.y = self.y + self.yvelocity
-        screen.blit(self.player_img, (self.x, self.y))
-        self.rect = self.player_img.get_rect(topleft=(self.x, self.y))
+        if self.mobile:
+            self.x = self.x + self.xvelocity
+            self.y = self.y + self.yvelocity
+        if self.direction == "left":
+            screen.blit(self.l_img, (self.x, self.y))
+        else: 
+            screen.blit(self.r_img, (self.x,self.y))
+        self.rect = self.l_img.get_rect(topleft=(self.x, self.y))

@@ -35,7 +35,7 @@ def on_quit():
 
 
 main_menu.add_button(500, 125,"image",os.path.join('images', 'play.png'),"play", on_play, os.path.join("sounds", "start_game.ogg"))
-main_menu.add_button(500, 125,"image",os.path.join('images', 'settings.png'),"settings", on_settings, os.path.join("sounds", "menu_select.wav"))
+main_menu.add_button(500, 125,"image",os.path.join('images', 'levels.png'),"settings", on_settings, os.path.join("sounds", "menu_select.wav"))
 main_menu.add_button(500, 125,"image",os.path.join('images', 'quit.png'),"quit", on_quit, os.path.join("sounds", "death.wav"))
 
 def main():
