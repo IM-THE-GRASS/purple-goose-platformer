@@ -110,5 +110,5 @@ def main():
         current_player.update(screen)
         platforms.update()
         platforms.draw(screen)
-        current_player.update(screen)
+        #current_player.update(screen)
         pygame.display.flip()

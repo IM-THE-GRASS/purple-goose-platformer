@@ -3,6 +3,7 @@ import os
 import ui
 import time
 import level1
+import levels_menu
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 pygame.init()
@@ -24,8 +25,9 @@ def on_play():
     print("play")
     level1.main()
 
-def on_settings():
-    print("settings")
+def on_levels():
+    main_menu.enabled = False
+    levels_menu.main()
 
 def on_quit():
     time.sleep(0.5)
@@ -35,7 +37,7 @@ def on_quit():
 
 
 main_menu.add_button(500, 125,"image",os.path.join('images', 'play.png'),"play", on_play, os.path.join("sounds", "start_game.ogg"))
-main_menu.add_button(500, 125,"image",os.path.join('images', 'levels.png'),"settings", on_settings, os.path.join("sounds", "menu_select.wav"))
+main_menu.add_button(500, 125,"image",os.path.join('images', 'levels.png'),"levels", on_levels, os.path.join("sounds", "menu_select.wav"))
 main_menu.add_button(500, 125,"image",os.path.join('images', 'quit.png'),"quit", on_quit, os.path.join("sounds", "death.wav"))
 
 def main():
