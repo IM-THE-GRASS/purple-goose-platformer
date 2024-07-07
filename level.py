@@ -3,7 +3,7 @@ import player
 import os
 import block
 
-def main():
+def main(level):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     pygame.init()
