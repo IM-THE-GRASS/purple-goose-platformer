@@ -21,7 +21,7 @@ def on_play(lvl):
     
     menu.enabled = False
     print("play")
-    level_editor.main(lvl)
+    level_editor.main(os.path.join("levels", lvl))
 
 for x in os.listdir("levels"):
     if x.endswith(".goose"):

@@ -2,7 +2,7 @@ import pygame
 import player
 import os
 import block
-
+import json
 def main(level):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -11,11 +11,15 @@ def main(level):
     font = pygame.font.SysFont("times new roman", 32, bold=True)
     running = True
     screen = pygame.display.set_mode((1200, 700))
-
+    f = open(level)
+    level_data = f.read()
+    f.close()
+    level_data = json.loads(level_data)
     platforms = pygame.sprite.Group()
     clock = pygame.time.Clock()
     current_block = {}
-    
+    for box in level_data:
+        platforms.add(block.Block(WHITE,box["width"],box["height"],box["x"],box["y"]))
     def generate_block(startpos, endpos):
         width =  endpos[0] - startpos[0]
         height = endpos[1] - startpos[1]
@@ -47,7 +51,14 @@ def main(level):
                     width, height, x, y = generate_block(startpos, endpos)
                     platform = block.Block(WHITE,width,height,x,y)
                     platforms.add(platform)
+                    rec = {"x":x,"y":y,"width":width,"height":height}
+                    level_data.append(rec)
+                    print(level_data)
+                    f = open(level, "w")
+                    f.write(json.dumps(level_data))
+                    f.close()
                     current_block = {}
+                    
             
                
             
