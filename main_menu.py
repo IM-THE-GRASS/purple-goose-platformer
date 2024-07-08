@@ -16,14 +16,14 @@ screen_width = 1200
 screen_height = 700
 screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("goobse")
-
+import play_menu
 
 main_menu = ui.menu(click, mouse_pos,screen,(25, 25))
 def on_play(_):
     
     main_menu.enabled = False
     print("play")
-    level.main("_")
+    play_menu.main()
 
 def on_levels(_):
     main_menu.enabled = False
@@ -36,7 +36,7 @@ def on_quit(_):
     
 
 
-main_menu.add_button(500, 125,"image",os.path.join('images', 'play.png'),"play", on_play, os.path.join("sounds", "v"))
+main_menu.add_button(500, 125,"image",os.path.join('images', 'play.png'),"play", on_play, os.path.join("sounds", "menu_select.wav"))
 main_menu.add_button(500, 125,"image",os.path.join('images', 'levels.png'),"levels", on_levels, os.path.join("sounds", "menu_select.wav"))
 main_menu.add_button(500, 125,"image",os.path.join('images', 'quit.png'),"quit", on_quit, os.path.join("sounds", "death.wav"))
 

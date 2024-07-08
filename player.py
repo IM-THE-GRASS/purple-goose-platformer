@@ -1,26 +1,28 @@
 import pygame
+import pymunk
+import pymunk.pygame_util
+from pymunk.vec2d import Vec2d
 pygame.init()
-class player(pygame.sprite.Sprite):
-    def __init__(self, x, y, player_img_path, width, height, color =(255,255,255)) -> None:
-        pygame.sprite.Sprite.__init__(self)
+class player():
+    def __init__(self, x, y, player_img_path, width, height,space) -> None:
+        self.body =  pymunk.Body(100, 1000000000000000000000)
+        self.shape = pymunk.Poly(self.body, [(0, 0), (width, 0), (width, height), (0, height)])
+        space.add(self.body, self.shape)
         self.x = x
         self.y = y
-        self.color = color
         self.size = (width, height)
-        self.mobile = True
-        self.yvelocity = 0
-        self.xvelocity = 0
+        
+        self.img = pygame.image.load(player_img_path).convert_alpha()
+        self.img = pygame.transform.scale(self.img, self.size)
+        self.r_img = pygame.transform.flip(self.img,True,False)
         self.direction = "left"
-        self.l_img = pygame.image.load(player_img_path).convert_alpha()
-        self.l_img = pygame.transform.scale(self.l_img, self.size)
-        self.r_img = pygame.transform.flip(self.l_img,True,False)
-        self.rect = self.l_img.get_rect(topleft=(self.x, self.y))
+        
+        self.rect = self.img.get_rect(topleft=(self.x, self.y))
     def update(self, screen):
-        if self.mobile:
-            self.x = self.x + self.xvelocity
-            self.y = self.y + self.yvelocity
+        self.x = self.body.position.x
+        self.y = self.body.position.y
         if self.direction == "left":
-            screen.blit(self.l_img, (self.x, self.y))
+            screen.blit(self.img, (self.x, self.y))
         else: 
             screen.blit(self.r_img, (self.x,self.y))
-        self.rect = self.l_img.get_rect(topleft=(self.x, self.y))
+        self.rect = self.img.get_rect(topleft=(self.x, self.y))
