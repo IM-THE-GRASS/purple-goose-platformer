@@ -3,10 +3,13 @@ import player
 import os
 import block
 import json
+import pymunk
 def main(level):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     pygame.init()
+    space = pymunk.Space()
+    space.gravity = (0,0)
     click = False
     font = pygame.font.SysFont("times new roman", 32, bold=True)
     running = True
@@ -15,11 +18,11 @@ def main(level):
     level_data = f.read()
     f.close()
     level_data = json.loads(level_data)
-    platforms = pygame.sprite.Group()
+    platforms = []
     clock = pygame.time.Clock()
     current_block = {}
     for box in level_data:
-        platforms.add(block.Block(WHITE,box["width"],box["height"],box["x"],box["y"]))
+        platforms.append(block.Block(WHITE,box["width"],box["height"],box["x"],box["y"], space))
     def generate_block(startpos, endpos):
         width =  endpos[0] - startpos[0]
         height = endpos[1] - startpos[1]
@@ -49,8 +52,8 @@ def main(level):
                     startpos = current_block["start_pos"]
                     current_block["end_pos"] = endpos
                     width, height, x, y = generate_block(startpos, endpos)
-                    platform = block.Block(WHITE,width,height,x,y)
-                    platforms.add(platform)
+                    platforms.append(block.Block(WHITE,width,height,x,y, space))
+
                     rec = {"x":x,"y":y,"width":width,"height":height}
                     level_data.append(rec)
                     print(level_data)
@@ -73,6 +76,6 @@ def main(level):
             s.fill((255,255,255))
             screen.blit(s, (x,y))
                     
-        platforms.update()
-        platforms.draw(screen)
+        for platform in platforms:
+            platform.update(screen)
         pygame.display.flip()
