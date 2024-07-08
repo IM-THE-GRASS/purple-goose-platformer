@@ -15,6 +15,8 @@ def main(level):
     space = pymunk.Space()
     space.gravity = (0,0)
     cp = ui.colorpicker(50, 50, 400, 60)
+    delete = ui.button(50,150,70,70,"image", os.path.join("images", "delete.png"))
+    current_tool = "draw"
     click = False
     font = pygame.font.SysFont("times new roman", 32, bold=True)
     running = True
@@ -50,24 +52,38 @@ def main(level):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            print(cp.clicked)
-            if event.type == pygame.MOUSEBUTTONDOWN and not cp.clicked:
-                current_block["start_pos"] = mouse_pos
-            if event.type == pygame.MOUSEBUTTONUP and not cp.clicked:
-                if current_block:
-                    endpos = mouse_pos
-                    startpos = current_block["start_pos"]
-                    current_block["end_pos"] = endpos
-                    width, height, x, y = generate_block(startpos, endpos)
-                    platforms.append(block.Block(color,width,height,x,y, space))
-
-                    rec = {"x":x,"y":y,"width":width,"height":height, "color":(color.r,color.g,color.b)}
-                    level_data.append(rec)
-                    f = open(level, "w")
-                    f.write(json.dumps(level_data))
-                    f.close()
-                    current_block = {}
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click = "down"
+                if current_tool == "draw":
+                    current_block["start_pos"] = mouse_pos
                     
+            if event.type == pygame.MOUSEBUTTONUP:
+                print("AAAAAAAAA")
+                click = "up"
+                if current_tool == "draw":
+                    if current_block:
+                        endpos = mouse_pos
+                        startpos = current_block["start_pos"]
+                        current_block["end_pos"] = endpos
+                        width, height, x, y = generate_block(startpos, endpos)
+                        platforms.append(block.Block(color,width,height,x,y, space))
+
+                        rec = {"x":x,"y":y,"width":width,"height":height, "color":(color.r,color.g,color.b)}
+                        level_data.append(rec)
+                        f = open(level, "w")
+                        f.write(json.dumps(level_data))
+                        f.close()
+                        current_block = {}
+                elif current_tool == "delete":
+                    print(level_data)
+                    print(platforms)
+                else:
+                    print(current_tool)
+        def on_delete(_):
+            print("delete")        
+            
+            current_tool = "delete"  
+            print(current_tool)  
             
                
             
@@ -83,4 +99,6 @@ def main(level):
             platform.update(screen)
         cp.update()
         cp.draw(screen)
+        delete.draw(on_delete,click,screen,mouse_pos)
         pygame.display.flip()
+        

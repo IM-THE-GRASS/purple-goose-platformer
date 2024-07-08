@@ -93,7 +93,7 @@ def main(level):
         
         for platform in platforms:
             platform.update(screen)
-            if platform.rect.colliderect(current_player.rect):
+            if platform.rect.collidepoint(current_player.rect.centerx,current_player.rect.bottom  - 5):
                 JumpCounter = 999
         #current_player.update(screen)
         pygame.display.flip()

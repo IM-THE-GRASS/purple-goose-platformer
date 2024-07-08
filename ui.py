@@ -68,8 +68,9 @@ class button:
         else:
             text_surf = None
         if self.rect.collidepoint(mouse_pos) and click_value == "up":
-            sfx = pygame.mixer.Sound(self.sound_path)
-            sfx.play()
+            if self.sound_path:
+                sfx = pygame.mixer.Sound(self.sound_path)
+                sfx.play()
             click_function(self.text)
         elif self.rect.collidepoint(mouse_pos) and click_value == None:
             if self.width == ogwidth and self.height == ogheight: 
