@@ -5,6 +5,7 @@ import os
 import ui
 import time
 import level
+import level_editor
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 pygame.init()
@@ -20,7 +21,7 @@ def on_play(lvl):
     
     menu.enabled = False
     print("play")
-    level.main(lvl)
+    level_editor.main(lvl)
 
 for x in os.listdir("levels"):
     if x.endswith(".goose"):
