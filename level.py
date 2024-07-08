@@ -6,6 +6,8 @@ import json
 import pymunk
 import pymunk.pygame_util
 from pymunk.vec2d import Vec2d
+
+
 def main(level):
     
     BLACK = (0, 0, 0)
@@ -37,7 +39,7 @@ def main(level):
     level_data = json.loads(level_data)
     platforms = []
     for box in level_data:
-        platforms.append(block.Block(WHITE,box["width"],box["height"],box["x"],box["y"], space))
+        platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
     JumpCounter = 999
     print(a)
     while running:

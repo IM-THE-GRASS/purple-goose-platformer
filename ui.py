@@ -4,7 +4,38 @@ pygame.init()
 font = pygame.font.SysFont("times new roman", 24, bold=True)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
+class colorpicker:
+    def __init__(self, x, y, w, h):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.image = pygame.image.load(os.path.join("images", "colors.png"))
+        self.image = pygame.transform.scale(self.image, (w,h / 3))
+        self.x = x
+        self.y = y
+        self.h = h
+        self.w = w
+        self.circle_rad = h/2
+        self.pwidth = w-self.circle_rad*2
+        self.clicked = False
+        self.p = 0
 
+    def get_color(self):
+        color = pygame.Color(0)
+        color.hsla = (int(self.p * self.pwidth), 100, 50, 100)
+        return color
+
+    def update(self):
+        moude_buttons = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        if moude_buttons[0] and self.rect.collidepoint(mouse_pos):
+            self.clicked =  True
+            self.p = (mouse_pos[0] - self.rect.x - self.circle_rad) / self.pwidth
+            self.p = (max(0, min(self.p, 1)))
+        else:self.clicked = False
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.x,self.y + (self.h/ 2) - 8))
+        center = self.rect.left + self.circle_rad + self.p * self.pwidth, self.rect.centery
+        pygame.draw.circle(screen, self.get_color(), center, self.circle_rad)
 class button:   
     def __init__(self, centerx, centery, width, height, type = "text",image_path= "", text = None, text_color = BLACK, sound_path = None):
         pygame.init()
