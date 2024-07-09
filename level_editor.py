@@ -5,7 +5,8 @@ import block
 import json
 import pymunk
 import ui
-
+import level_editor
+current_tool = "draw"
 
 
 def main(level):
@@ -16,7 +17,7 @@ def main(level):
     space.gravity = (0,0)
     cp = ui.colorpicker(50, 50, 400, 60)
     delete = ui.button(50,150,70,70,"image", os.path.join("images", "delete.png"))
-    current_tool = "draw"
+    
     click = False
     font = pygame.font.SysFont("times new roman", 32, bold=True)
     running = True
@@ -58,7 +59,7 @@ def main(level):
                     current_block["start_pos"] = mouse_pos
                     
             if event.type == pygame.MOUSEBUTTONUP:
-                print("AAAAAAAAA")
+                print(current_tool)
                 click = "up"
                 if current_tool == "draw":
                     if current_block:
@@ -75,6 +76,10 @@ def main(level):
                         f.close()
                         current_block = {}
                 elif current_tool == "delete":
+                    for bloc in platforms:
+                        rect = pygame.Rect(bloc.x,bloc.y,bloc.width,bloc.height)
+                        if rect.collidepoint(mouse_pos):
+                            platforms.remove(bloc)
                     print(level_data)
                     print(platforms)
                 else:
@@ -82,11 +87,10 @@ def main(level):
         def on_delete(_):
             print("delete")        
             
-            current_tool = "delete"  
+            level_editor.current_tool = "delete"  
             print(current_tool)  
             
-               
-            
+        # drawing stuff
         screen.fill(BLACK)
         if not "end_pos" in current_block.keys() and "start_pos" in current_block.keys():
             width, height, x, y = generate_block(current_block["start_pos"], mouse_pos)

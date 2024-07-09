@@ -10,10 +10,13 @@ class Block():
         self.body.position =Vec2d(x,y)
         self.shape = pymunk.Poly(self.body, [(0, 0), (width, 0), (width, height), (0, height)])
         space.add(self.body, self.shape)
-        
+        self.width = width
+        self.height = height
+        self.x = x
+        self.y = y
+        self.color = color
         self.pos = (x,y)
         self.image = pygame.Surface([width, height])
-        self.color = color
         self.image.fill(color)
         self.rect = self.image.get_rect()
     def update(self, screen):
