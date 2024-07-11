@@ -17,7 +17,7 @@ def main(level):
     space.gravity = (0,0)
     cp = ui.colorpicker(50, 50, 400, 60)
     delete = ui.button(50,150,70,70,"image", os.path.join("images", "delete.png"))
-    
+    draw = ui.button(50,250,70,70,"image", os.path.join("images", "draw.png"))
     click = False
     font = pygame.font.SysFont("times new roman", 32, bold=True)
     running = True
@@ -71,25 +71,33 @@ def main(level):
 
                         rec = {"x":x,"y":y,"width":width,"height":height, "color":(color.r,color.g,color.b)}
                         level_data.append(rec)
-                        f = open(level, "w")
-                        f.write(json.dumps(level_data))
-                        f.close()
+                        
                         current_block = {}
                 elif current_tool == "delete":
+                    print(type(level_data))
                     for bloc in platforms:
+                        print(bloc)
                         rect = pygame.Rect(bloc.x,bloc.y,bloc.width,bloc.height)
                         if rect.collidepoint(mouse_pos):
                             platforms.remove(bloc)
+                        for rec in level_data:
+                            if rec == {"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":bloc.color}:
+                                level_data.remove(rec)
+                        print(level_data)
                     print(level_data)
                     print(platforms)
                 else:
                     print(current_tool)
         def on_delete(_):
             print("delete")        
+            level_editor.current_tool = "delete"   
             
-            level_editor.current_tool = "delete"  
-            print(current_tool)  
-            
+        def on_draw(_):
+            print("draw")
+            level_editor.current_tool = "draw"
+        f = open(level, "w")
+        f.write(json.dumps(level_data))
+        f.close()
         # drawing stuff
         screen.fill(BLACK)
         if not "end_pos" in current_block.keys() and "start_pos" in current_block.keys():
@@ -104,5 +112,6 @@ def main(level):
         cp.update()
         cp.draw(screen)
         delete.draw(on_delete,click,screen,mouse_pos)
+        draw.draw(on_draw,click,screen,mouse_pos)
         pygame.display.flip()
         
