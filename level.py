@@ -21,7 +21,7 @@ def main(level):
     screen = pygame.display.set_mode((1200, 700))
     pygame.display.set_caption("goobse")
     space = pymunk.Space()
-    space.damping = 0.1
+    space.damping = 0.01 
     options = pymunk.pygame_util.DrawOptions(screen)
     space.gravity= (0, 10000)
     player_img = os.path.join("images", "goose.png")
@@ -71,18 +71,16 @@ def main(level):
         keys_pressed = pygame.key.get_pressed()
         
         if keys_pressed[w]:
-            print("asdsdadas")
+            pass
         if keys_pressed[a]:
-            current_player.body.apply_impulse_at_world_point(( -4000, 0), current_player.body.position)
-            print("A")
+            current_player.body.apply_impulse_at_world_point(( -8000, 0), current_player.body.position)
             current_player.direction = "left"
         if keys_pressed[s]:
             pass
         if keys_pressed[d]:
-            current_player.body.apply_impulse_at_world_point(( 4000, 0), current_player.body.position)
+            current_player.body.apply_impulse_at_world_point(( 8000, 0), current_player.body.position)
             current_player.direction = "right"
         if keys_pressed[space_key] and JumpCounter > 100:
-            print(JumpCounter)
             current_player.body.apply_impulse_at_world_point(( 0, -251111), current_player.body.position)
             JumpCounter = 1
 

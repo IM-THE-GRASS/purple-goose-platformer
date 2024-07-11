@@ -59,7 +59,6 @@ def main(level):
                     current_block["start_pos"] = mouse_pos
                     
             if event.type == pygame.MOUSEBUTTONUP:
-                print(current_tool)
                 click = "up"
                 if current_tool == "draw":
                     if current_block:
@@ -74,26 +73,21 @@ def main(level):
                         
                         current_block = {}
                 elif current_tool == "delete":
-                    print(type(level_data))
+                    
                     for bloc in platforms:
-                        print(bloc)
+                        print({"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":bloc.color})
                         rect = pygame.Rect(bloc.x,bloc.y,bloc.width,bloc.height)
                         if rect.collidepoint(mouse_pos):
                             platforms.remove(bloc)
-                        for rec in level_data:
-                            if rec == {"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":bloc.color}:
-                                level_data.remove(rec)
-                        print(level_data)
-                    print(level_data)
-                    print(platforms)
-                else:
-                    print(current_tool)
-        def on_delete(_):
-            print("delete")        
+                            for rec in level_data:
+                                if rec == {"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":bloc.color}:
+                                    print(rec)
+                                    level_data.remove(rec)
+
+        def on_delete(_):        
             level_editor.current_tool = "delete"   
             
         def on_draw(_):
-            print("draw")
             level_editor.current_tool = "draw"
         f = open(level, "w")
         f.write(json.dumps(level_data))
