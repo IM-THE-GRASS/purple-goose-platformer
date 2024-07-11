@@ -33,7 +33,7 @@ def on_quit(_):
     time.sleep(0.5)
     pygame.quit()
     quit()
-    
+pygame.mixer.Sound(os.path.join("sounds", "music.wav")).play(-1)
 
 
 main_menu.add_button(500, 125,"image",os.path.join('images', 'play.png'),"play", on_play, os.path.join("sounds", "menu_select.wav"))

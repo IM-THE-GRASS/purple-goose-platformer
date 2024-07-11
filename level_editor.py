@@ -18,6 +18,7 @@ def main(level):
     cp = ui.colorpicker(50, 50, 400, 60)
     delete = ui.button(50,150,70,70,"image", os.path.join("images", "delete.png"))
     draw = ui.button(50,250,70,70,"image", os.path.join("images", "draw.png"))
+    finish_button = ui.button(50,350,70,70,"image", os.path.join("images", "finish.png"))
     click = False
     font = pygame.font.SysFont("times new roman", 32, bold=True)
     running = True
@@ -89,6 +90,9 @@ def main(level):
             
         def on_draw(_):
             level_editor.current_tool = "draw"
+        
+        def on_place_finish(_):
+            print("sajdjsaj")
         f = open(level, "w")
         f.write(json.dumps(level_data))
         f.close()
@@ -106,6 +110,7 @@ def main(level):
         cp.update()
         cp.draw(screen)
         delete.draw(on_delete,click,screen,mouse_pos)
+        finish_button.draw(on_place_finish,click,screen,mouse_pos)
         draw.draw(on_draw,click,screen,mouse_pos)
         pygame.display.flip()
         

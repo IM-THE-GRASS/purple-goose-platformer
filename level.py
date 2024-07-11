@@ -81,6 +81,7 @@ def main(level):
             current_player.body.apply_impulse_at_world_point(( 8000, 0), current_player.body.position)
             current_player.direction = "right"
         if keys_pressed[space_key] and JumpCounter > 100:
+            pygame.mixer.Sound(os.path.join("sounds", "jump.wav")).play()
             current_player.body.apply_impulse_at_world_point(( 0, -251111), current_player.body.position)
             JumpCounter = 1
 
