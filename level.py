@@ -31,6 +31,10 @@ def main(level):
     a = pygame.K_a
     s = pygame.K_s
     d = pygame.K_d
+    jump_enabled = True
+    jump_counter = 0 
+    jump_cooldown = 10
+    dash_enabled = True
     space_key = pygame.K_SPACE
     clock = pygame.time.Clock()
     f = open(level)
@@ -40,7 +44,6 @@ def main(level):
     platforms = []
     for box in level_data:
         platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
-    JumpCounter = 999
     print(a)
     while running:
         clock.tick(60)
@@ -53,6 +56,9 @@ def main(level):
                 click = "down"
             if event.type == pygame.MOUSEBUTTONUP:
                 click = "up"
+                if dash_enabled:
+                    if current_player.direction == "right":
+                        current_player.body.apply_force_at_world_point(( 9999999, -6000000), current_player.body.position)
             if event.type == pygame.KEYUP:
                 if event.key == w:
                     pass
@@ -66,10 +72,10 @@ def main(level):
                     current_player.direction = "right"
                 if event.key == space_key:
                     current_player.yvelocity = 0
-        JumpCounter = JumpCounter + 1
         mouse_pos = pygame.mouse.get_pos()        
         keys_pressed = pygame.key.get_pressed()
-        
+        jump_counter+=1
+        print(jump_counter)
         if keys_pressed[w]:
             pass
         if keys_pressed[a]:
@@ -80,19 +86,22 @@ def main(level):
         if keys_pressed[d]:
             current_player.body.apply_impulse_at_world_point(( 8000, 0), current_player.body.position)
             current_player.direction = "right"
-        if keys_pressed[space_key] and JumpCounter > 100:
+        if keys_pressed[space_key] and jump_enabled and jump_counter > jump_cooldown:
             pygame.mixer.Sound(os.path.join("sounds", "jump.wav")).play()
             current_player.body.apply_impulse_at_world_point(( 0, -251111), current_player.body.position)
-            JumpCounter = 1
-
+            jump_enabled = False
+            jump_counter = 0
+        print(current_player.rect.right)
         screen.fill(BLACK)
         fps = 60
         space.step(1 / fps)
         current_player.update(screen)
-        
         for platform in platforms:
             platform.update(screen)
-            if platform.rect.collidepoint(current_player.rect.centerx,current_player.rect.bottom  - 5):
-                JumpCounter = 999
+            player_bottom = current_player.rect.centerx,current_player.rect.bottom
+            player_right = current_player.rect.right,current_player.rect.centery
+            player_left = current_player.rect.left,current_player.rect.centery
+            if platform.rect.collidepoint(player_bottom) or platform.rect.collidepoint(player_right) or platform.rect.collidepoint(player_left):
+                jump_enabled = True
         #current_player.update(screen)
         pygame.display.flip()

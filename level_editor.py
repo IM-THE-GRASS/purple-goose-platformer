@@ -17,8 +17,8 @@ def main(level):
     space.gravity = (0,0)
     cp = ui.colorpicker(50, 50, 400, 60)
     delete = ui.button(50,150,70,70,"image", os.path.join("images", "delete.png"))
-    draw = ui.button(50,250,70,70,"image", os.path.join("images", "draw.png"))
-    finish_button = ui.button(50,350,70,70,"image", os.path.join("images", "finish.png"))
+    draw = ui.button(50,230,70,70,"image", os.path.join("images", "draw.png"))
+    finish_button = ui.button(50,310,70,70,"image", os.path.join("images", "finish.png"))
     click = False
     font = pygame.font.SysFont("times new roman", 32, bold=True)
     running = True
