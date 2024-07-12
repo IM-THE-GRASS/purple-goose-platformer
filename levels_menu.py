@@ -34,6 +34,7 @@ text_surface = font.render("button", False, BLACK)
 
 
 def main():
+    menu.enabled = True
     while running:
         click = None
         for event in pygame.event.get():

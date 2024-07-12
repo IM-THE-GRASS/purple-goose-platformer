@@ -41,6 +41,7 @@ main_menu.add_button(500, 125,"image",os.path.join('images', 'levels.png'),"leve
 main_menu.add_button(500, 125,"image",os.path.join('images', 'quit.png'),"quit", on_quit, os.path.join("sounds", "death.wav"))
 
 def main():
+    main_menu.enabled = True
     while running:
         click = None
         for event in pygame.event.get():

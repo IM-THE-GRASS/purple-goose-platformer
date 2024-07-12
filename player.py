@@ -11,7 +11,7 @@ class player():
         self.x = x
         self.y = y
         self.size = (width, height)
-        
+        self.is_dead = False
         self.img = pygame.image.load(player_img_path).convert_alpha()
         self.img = pygame.transform.scale(self.img, self.size)
         self.r_img = pygame.transform.flip(self.img,True,False)
