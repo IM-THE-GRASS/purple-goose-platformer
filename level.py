@@ -9,8 +9,12 @@ from pymunk.vec2d import Vec2d
 import ui
 import main_menu
 import level as lvl
+
+
+
 def main(level):
-    
+    global paused
+    paused = False
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     pygame.init()
@@ -33,6 +37,7 @@ def main(level):
     s = pygame.K_s
     d = pygame.K_d
     death_screen = pygame.image.load(os.path.join("images", "die.png")).convert_alpha()
+    pause_screen = pygame.image.load(os.path.join("images", "paused.png")).convert_alpha()
     jump_enabled = True
     jump_counter = 0 
     jump_cooldown = 10
@@ -44,15 +49,21 @@ def main(level):
     f.close()
     level_data = json.loads(level_data)
     platforms = []
+    def menu(_ = None):
+        lvl.running = False
+        main_menu.main()
+        
+    def end(_ = None):
+        pygame.quit()
+        quit()
     
-    
-    death_menu = ui.menu(click,mouse_pos,screen, (301,341))
+
+    pause_button = ui.button(1090, 10, 100,100,"image",os.path.join('images', 'pause.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     main_menu_button = ui.button(300,341,573,142,"image",image_path=os.path.join('images', 'main menu.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     quit_button = ui.button(300,490,573,142,"image",image_path=os.path.join('images', 'quit.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     for box in level_data:
         platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
     while running:
-        print(current_player.x, current_player.y)
         clock.tick(60)
         click = None
         for event in pygame.event.get():
@@ -66,13 +77,14 @@ def main(level):
                 if dash_enabled:
                     if current_player.direction == "right":
                         current_player.body.apply_force_at_world_point(( 9999999, -6000000), current_player.body.position)
+                    if current_player.direction == "left":
+                        current_player.body.apply_force_at_world_point(( -9999999, -6000000), current_player.body.position)
             if event.type == pygame.KEYUP:
                 if event.key == a and not current_player.is_dead:
                     current_player.direction = "left"
                 if event.key == d and not current_player.is_dead:
                     current_player.direction = "right"
         mouse_pos = pygame.mouse.get_pos()     
-        death_menu.set_mouse_info(click, mouse_pos)   
         keys_pressed = pygame.key.get_pressed()
         jump_counter+=1
         if not current_player.is_dead:
@@ -105,16 +117,19 @@ def main(level):
             player_left = current_player.rect.left,current_player.rect.centery
             if platform.rect.collidepoint(player_bottom) or platform.rect.collidepoint(player_right) or platform.rect.collidepoint(player_left):
                 jump_enabled = True
-        if current_player.is_dead:
-            screen.blit(death_screen, (0,0))
-            def menu(_ = None):
-                lvl.running = False
-                main_menu.main()
-                
-            def end(_ = None):
-                pygame.quit()
-                quit()
+        if not current_player.is_dead and not paused:
+            pause_button.draw(lvl.pause, click, screen, mouse_pos)
+        if current_player.is_dead or paused:
+            if current_player.is_dead:
+                screen.blit(death_screen, (0,0))
+            elif paused:
+                print("AA")
+                screen.blit(pause_screen, (0,0))
+            
             main_menu_button.draw(menu, click, screen, mouse_pos)
             quit_button.draw(end, click, screen, mouse_pos)
         #current_player.update(screen)
         pygame.display.flip()
+
+def pause(_ = None):
+    lvl.paused = True

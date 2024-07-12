@@ -6,10 +6,13 @@ import json
 import pymunk
 import ui
 import level_editor
+import main_menu
 current_tool = "draw"
 
 
 def main(level):
+    global paused 
+    paused = False
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     pygame.init()
@@ -30,6 +33,17 @@ def main(level):
     platforms = []
     clock = pygame.time.Clock()
     current_block = {}
+    def menu(_ = None):
+        level_editor.running = False
+        main_menu.main()
+        
+    def end(_ = None):
+        pygame.quit()
+        quit()
+    pause_screen = pygame.image.load(os.path.join("images", "paused.png")).convert_alpha()
+    pause_button = ui.button(1090, 10, 100,100,"image",os.path.join('images', 'pause.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
+    main_menu_button = ui.button(300,341,573,142,"image",image_path=os.path.join('images', 'main menu.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
+    quit_button = ui.button(300,490,573,142,"image",image_path=os.path.join('images', 'quit.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     for box in level_data:
         platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
     def generate_block(startpos, endpos):
@@ -112,5 +126,15 @@ def main(level):
         delete.draw(on_delete,click,screen,mouse_pos)
         finish_button.draw(on_place_finish,click,screen,mouse_pos)
         draw.draw(on_draw,click,screen,mouse_pos)
-        pygame.display.flip()
         
+        if not paused:
+            pause_button.draw(level_editor.pause, click, screen, mouse_pos)
+        if paused:
+            screen.blit(pause_screen, (0,0)) 
+            main_menu_button.draw(menu, click, screen, mouse_pos)
+            quit_button.draw(end, click, screen, mouse_pos)
+        pygame.display.flip()
+            
+        
+def pause(_ = None):
+    level_editor.paused = True
