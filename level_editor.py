@@ -7,8 +7,6 @@ import pymunk
 import ui
 import level_editor
 import main_menu
-current_tool = "draw"
-
 
 def main(level):
     def get_level_data(lvl):
@@ -17,12 +15,7 @@ def main(level):
         f.close()
         level_data = json.loads(level_data)
         return level_data
-    def open_menu(_ = None):
-        level_editor.running = False
-        main_menu.main()  
-    def exit(_ = None):
-        pygame.quit()
-        quit()
+    
     
     # pygame stuff
     BLACK = (0, 0, 0)
@@ -37,7 +30,7 @@ def main(level):
     
     
     #ui 
-    cp = ui.colorpicker(50, 50, 400, 60)
+    colorpicker = ui.colorpicker(50, 50, 400, 60)
     delete = ui.button(50,150,70,70,"image", os.path.join("images", "delete.png"))
     draw = ui.button(50,230,70,70,"image", os.path.join("images", "draw.png"))
     finish_button = ui.button(50,310,70,70,"image", os.path.join("images", "finish.png"))
@@ -48,18 +41,24 @@ def main(level):
     
     # variables to keep track of stuff
     global paused 
+    global current_tool
     paused = False
-    click = False
+    click = None
     running = True
-    
+    current_tool = "draw"
+    finish_flag_size = 60
     
     # level data stuff
     level_data = get_level_data(level)
     platforms = []
+    flags = []
     current_block = {}
     def load_data():
         for box in level_data:
-            platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
+            if box["type"] == "platform":
+                platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
+            elif box["type"] == "finish":
+                flags.append(pygame.Rect(box["x"], box["y"], finish_flag_size, finish_flag_size))
     load_data()
     def generate_block(startpos, endpos):
         width =  endpos[0] - startpos[0]
@@ -76,51 +75,62 @@ def main(level):
         return width, height, x, y
     
     while running:
-        print(current_block)
-        current_color = cp.get_color()
-        clock.tick(60)
+        current_color = colorpicker.get_color()
         mouse_pos = pygame.mouse.get_pos() 
         click = None
+        
+        clock.tick(60)
+        
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                level_editor.exit()
+                
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = "down"
                 if current_tool == "draw":
                     current_block["start_pos"] = mouse_pos
-                    print("AAA")
+            elif event.type == pygame.MOUSEBUTTONUP:
+                click = "up"
                 if current_tool == "draw":
                     if current_block:
+                        
                         endpos = mouse_pos
                         startpos = current_block["start_pos"]
                         current_block["end_pos"] = endpos
                         width, height, x, y = generate_block(startpos, endpos)
                         platforms.append(block.Block(current_color,width,height,x,y, space))
-
+                        print(width,height)
+                        
                         rec = {"x":x,"y":y,"width":width,"height":height, "color":tuple(current_color), "type":"platform"}
                         level_data.append(rec)
-                        
                         current_block = {}
+                        
                 elif current_tool == "delete":
                     for bloc in platforms:
-
                         rect = pygame.Rect(bloc.x,bloc.y,bloc.width,bloc.height)
                         if rect.collidepoint(mouse_pos):
                             platforms.remove(bloc)
                             for rec in level_data:
                                 if rec == {"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":bloc.color, "type":"platform"}:
-                                    print(rec)
                                     level_data.remove(rec)
+                                    
+                elif current_tool == "place_flag":
+                    rec = {"x":mouse_pos[0],"y":mouse_pos[1],"width":finish_flag_size,"height":finish_flag_size, "color":tuple(pygame.Color(0,0,0)), "type":"finish"}
+                    level_data.append(rec)
+                    flags.append(mouse_pos)
 
         def on_delete(_):        
-            level_editor.current_tool = "delete"   
+            print("aa")
+            level_editor.current_tool = "delete" 
             
         def on_draw(_):
             level_editor.current_tool = "draw"
         
         def on_place_finish(_):
-            print("sajdjsaj")
+            level_editor.current_tool = "place_flag"
+            
         f = open(level, "w")
         f.write(json.dumps(level_data))
         f.close()
@@ -135,8 +145,11 @@ def main(level):
         
         for platform in platforms:
             platform.update(screen)
-        cp.update()
-        cp.draw(screen)
+        for flag in flags:
+            image = pygame.image.load(os.path.join("images", "flag.png")).convert_alpha()
+            screen.blit(image, flag.topleft)
+        colorpicker.update()
+        colorpicker.draw(screen)
         delete.draw(on_delete,click,screen,mouse_pos)
         finish_button.draw(on_place_finish,click,screen,mouse_pos)
         draw.draw(on_draw,click,screen,mouse_pos)
@@ -152,3 +165,9 @@ def main(level):
         
 def pause(_ = None):
     level_editor.paused = True
+def open_menu(_ = None):
+        level_editor.running = False
+        main_menu.main()  
+def exit(_ = None):
+    pygame.quit()
+    quit()

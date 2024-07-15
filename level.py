@@ -38,6 +38,7 @@ def main(level):
     d = pygame.K_d
     death_screen = pygame.image.load(os.path.join("images", "die.png")).convert_alpha()
     pause_screen = pygame.image.load(os.path.join("images", "paused.png")).convert_alpha()
+    winner_screen = pygame.image.load(os.path.join("images", "winner.png")).convert_alpha()
     jump_enabled = True
     jump_counter = 0 
     jump_cooldown = 10
@@ -49,6 +50,7 @@ def main(level):
     f.close()
     level_data = json.loads(level_data)
     platforms = []
+    flags = []
     def menu(_ = None):
         lvl.running = False
         main_menu.main()
@@ -57,12 +59,15 @@ def main(level):
         pygame.quit()
         quit()
     
-
+    flag_size = 60
     pause_button = ui.button(1090, 10, 100,100,"image",os.path.join('images', 'pause.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     main_menu_button = ui.button(300,341,573,142,"image",image_path=os.path.join('images', 'main menu.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     quit_button = ui.button(300,490,573,142,"image",image_path=os.path.join('images', 'quit.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     for box in level_data:
-        platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
+        if box["type"] == "platform":
+            platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
+        elif box["type"] == "finish":
+            flags.append(pygame.Rect(box["x"], box["y"], flag_size, flag_size))
     while running:
         clock.tick(60)
         click = None
@@ -117,13 +122,15 @@ def main(level):
             player_left = current_player.rect.left,current_player.rect.centery
             if platform.rect.collidepoint(player_bottom) or platform.rect.collidepoint(player_right) or platform.rect.collidepoint(player_left):
                 jump_enabled = True
+        for flag in flags:
+            image = pygame.image.load(os.path.join("images", "flag.png")).convert_alpha()
+            screen.blit(image, flag.topleft)
         if not current_player.is_dead and not paused:
             pause_button.draw(lvl.pause, click, screen, mouse_pos)
         if current_player.is_dead or paused:
             if current_player.is_dead:
                 screen.blit(death_screen, (0,0))
             elif paused:
-                print("AA")
                 screen.blit(pause_screen, (0,0))
             
             main_menu_button.draw(menu, click, screen, mouse_pos)
