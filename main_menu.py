@@ -34,7 +34,7 @@ def on_quit(_):
     pygame.quit()
     quit()
 pygame.mixer.Sound(os.path.join("sounds", "music.mp3")).play(-1)
-
+bg = pygame.image.load(os.path.join("images", "menu_bg.png"))
 
 main_menu.add_button(500, 125,"image",os.path.join('images', 'play.png'),"play", on_play, os.path.join("sounds", "menu_select.wav"))
 main_menu.add_button(500, 125,"image",os.path.join('images', 'levels.png'),"levels", on_levels, os.path.join("sounds", "menu_select.wav"))
@@ -58,7 +58,7 @@ def main():
         
         
         screen.fill(BLACK)
-        
+        screen.blit(bg, (0,0))
         main_menu.draw()
 
         pygame.display.flip()

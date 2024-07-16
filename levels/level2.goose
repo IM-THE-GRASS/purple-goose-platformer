@@ -1,0 +1,1 @@
+[{"x": 576, "y": 363, "width": 0, "height": 0, "color": [255, 0, 0, 255], "type": "platform"}]

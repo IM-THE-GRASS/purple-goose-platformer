@@ -42,9 +42,9 @@ def main(level):
     pause_button = ui.button(1090, 10, 100,100,"image",os.path.join('images', 'pause.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     ui_rects.append(pause_button.rect)
     main_menu_button = ui.button(300,341,573,142,"image",image_path=os.path.join('images', 'main menu.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
-    ui_rects.append(main_menu_button.rect)
+    #ui_rects.append(main_menu_button.rect)
     quit_button = ui.button(300,490,573,142,"image",image_path=os.path.join('images', 'quit.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
-    ui_rects.append(quit_button.rect)
+    #ui_rects.append(quit_button.rect)
     
     
     pause_screen = pygame.image.load(os.path.join("images", "paused.png")).convert_alpha()
@@ -96,12 +96,10 @@ def main(level):
         click = None
         
         clock.tick(60)
-        
         if any(rect.collidepoint(mouse_pos) for rect in ui_rects):
             touching_ui = True
         else:
             touching_ui = False
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 level_editor.exit()
@@ -180,7 +178,6 @@ def main(level):
         delete.draw(on_delete,click,screen,mouse_pos)
         finish_button.draw(on_place_finish,click,screen,mouse_pos)
         draw.draw(on_draw,click,screen,mouse_pos)
-        
         if paused:
             screen.blit(pause_screen, (0,0)) 
             main_menu_button.draw(open_menu, click, screen, mouse_pos)

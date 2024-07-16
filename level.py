@@ -42,6 +42,8 @@ def main(level):
     jump_enabled = True
     jump_counter = 0 
     jump_cooldown = 10
+    dash_counter = 0
+    dash_cooldown = 50
     dash_enabled = True
     space_key = pygame.K_SPACE
     winner = False
@@ -88,13 +90,18 @@ def main(level):
                         current_player.body.apply_force_at_world_point(( 9999999, -6000000), current_player.body.position)
                     if current_player.direction == "left":
                         current_player.body.apply_force_at_world_point(( -9999999, -6000000), current_player.body.position)
+                    dash_enabled = False
+                    dash_counter = 0
             if event.type == pygame.KEYUP:
                 if event.key == a and not current_player.is_dead:
                     current_player.direction = "left"
                 if event.key == d and not current_player.is_dead:
                     current_player.direction = "right"
+        if dash_counter > dash_cooldown:
+            dash_enabled = True
         mouse_pos = pygame.mouse.get_pos()     
         keys_pressed = pygame.key.get_pressed()
+        dash_counter+=1
         jump_counter+=1
         if not current_player.is_dead:
             if keys_pressed[w]:
