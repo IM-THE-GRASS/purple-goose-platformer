@@ -107,12 +107,12 @@ def main(level):
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = "down"
-                if current_tool == "draw" and not touching_ui:
+                if current_tool == "draw" and not touching_ui and not paused:
                     current_block["start_pos"] = mouse_pos
             elif event.type == pygame.MOUSEBUTTONUP:
                 click = "up"
                 
-                if not touching_ui:
+                if not touching_ui and not paused:
                     if current_tool == "draw":
                         if current_block:
                             
