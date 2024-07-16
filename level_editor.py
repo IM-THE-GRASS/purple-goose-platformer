@@ -58,6 +58,7 @@ def main(level):
             if box["type"] == "platform":
                 platforms.append(block.Block(box["color"],box["width"],box["height"],box["x"],box["y"], space))
             elif box["type"] == "finish":
+                
                 flags.append(pygame.Rect(box["x"], box["y"], finish_flag_size, finish_flag_size))
     load_data()
     def generate_block(startpos, endpos):
@@ -74,6 +75,12 @@ def main(level):
             height = height * -1
         return width, height, x, y
     
+    def convert_to_level_data(bloc, bloc_type):
+        if type(bloc) == block.Block:
+            return {"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":bloc.color, "type":bloc_type}
+        elif type(bloc) == pygame.Rect:
+            return {"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":[0,0,0, 255], "type":bloc_type}
+        
     while running:
         current_color = colorpicker.get_color()
         mouse_pos = pygame.mouse.get_pos() 
@@ -113,16 +120,22 @@ def main(level):
                         if rect.collidepoint(mouse_pos):
                             platforms.remove(bloc)
                             for rec in level_data:
-                                if rec == {"x":bloc.x,"y":bloc.y,"width":bloc.width,"height":bloc.height, "color":bloc.color, "type":"platform"}:
+                                if rec == convert_to_level_data(bloc, "platform"):
                                     level_data.remove(rec)
+                    for flag in flags:
+                        if flag.collidepoint(mouse_pos):
+                            flags.remove(flag)
+                            for rec in level_data:
+                                new_flag = convert_to_level_data(flag, "finish")
+                                if rec == new_flag:
+                                    level_data.remove(new_flag)
                                     
                 elif current_tool == "place_flag":
                     rec = {"x":mouse_pos[0],"y":mouse_pos[1],"width":finish_flag_size,"height":finish_flag_size, "color":tuple(pygame.Color(0,0,0)), "type":"finish"}
                     level_data.append(rec)
-                    flags.append(mouse_pos)
+                    flags.append(rec)
 
-        def on_delete(_):        
-            print("aa")
+        def on_delete(_): 
             level_editor.current_tool = "delete" 
             
         def on_draw(_):

@@ -44,6 +44,7 @@ def main(level):
     jump_cooldown = 10
     dash_enabled = True
     space_key = pygame.K_SPACE
+    winner = False
     clock = pygame.time.Clock()
     f = open(level)
     level_data = f.read()
@@ -58,7 +59,10 @@ def main(level):
     def end(_ = None):
         pygame.quit()
         quit()
-    
+    def draw_menu(bg):
+        screen.blit(bg, (0,0))
+        main_menu_button.draw(menu, click, screen, mouse_pos)
+        quit_button.draw(end, click, screen, mouse_pos)
     flag_size = 60
     pause_button = ui.button(1090, 10, 100,100,"image",os.path.join('images', 'pause.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
     main_menu_button = ui.button(300,341,573,142,"image",image_path=os.path.join('images', 'main menu.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
@@ -125,16 +129,16 @@ def main(level):
         for flag in flags:
             image = pygame.image.load(os.path.join("images", "flag.png")).convert_alpha()
             screen.blit(image, flag.topleft)
+        if current_player.rect.collidelist(flags) > -1:
+            winner = True
         if not current_player.is_dead and not paused:
             pause_button.draw(lvl.pause, click, screen, mouse_pos)
-        if current_player.is_dead or paused:
-            if current_player.is_dead:
-                screen.blit(death_screen, (0,0))
-            elif paused:
-                screen.blit(pause_screen, (0,0))
-            
-            main_menu_button.draw(menu, click, screen, mouse_pos)
-            quit_button.draw(end, click, screen, mouse_pos)
+        if current_player.is_dead:
+            draw_menu(death_screen)
+        elif paused:
+            draw_menu(pause_screen)
+        elif winner:
+            draw_menu(winner_screen)
         #current_player.update(screen)
         pygame.display.flip()
 
