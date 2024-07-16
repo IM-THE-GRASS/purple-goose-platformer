@@ -30,15 +30,24 @@ def main(level):
     
     
     #ui 
+    ui_rects = []
     colorpicker = ui.colorpicker(50, 50, 400, 60)
+    ui_rects.append(colorpicker.rect)
     delete = ui.button(50,150,70,70,"image", os.path.join("images", "delete.png"))
+    ui_rects.append(delete.rect)
     draw = ui.button(50,230,70,70,"image", os.path.join("images", "draw.png"))
+    ui_rects.append(draw.rect)
     finish_button = ui.button(50,310,70,70,"image", os.path.join("images", "finish.png"))
-    pause_screen = pygame.image.load(os.path.join("images", "paused.png")).convert_alpha()
+    ui_rects.append(finish_button.rect)
     pause_button = ui.button(1090, 10, 100,100,"image",os.path.join('images', 'pause.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
+    ui_rects.append(pause_button.rect)
     main_menu_button = ui.button(300,341,573,142,"image",image_path=os.path.join('images', 'main menu.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
+    ui_rects.append(main_menu_button.rect)
     quit_button = ui.button(300,490,573,142,"image",image_path=os.path.join('images', 'quit.png'),sound_path=os.path.join("sounds", "menu_select.wav"))
+    ui_rects.append(quit_button.rect)
     
+    
+    pause_screen = pygame.image.load(os.path.join("images", "paused.png")).convert_alpha()
     # variables to keep track of stuff
     global paused 
     global current_tool
@@ -88,6 +97,10 @@ def main(level):
         
         clock.tick(60)
         
+        if any(rect.collidepoint(mouse_pos) for rect in ui_rects):
+            touching_ui = True
+        else:
+            touching_ui = False
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -96,44 +109,45 @@ def main(level):
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = "down"
-                if current_tool == "draw":
+                if current_tool == "draw" and not touching_ui:
                     current_block["start_pos"] = mouse_pos
             elif event.type == pygame.MOUSEBUTTONUP:
                 click = "up"
-                if current_tool == "draw":
-                    if current_block:
-                        
-                        endpos = mouse_pos
-                        startpos = current_block["start_pos"]
-                        current_block["end_pos"] = endpos
-                        width, height, x, y = generate_block(startpos, endpos)
-                        platforms.append(block.Block(current_color,width,height,x,y, space))
-                        print(width,height)
-                        
-                        rec = {"x":x,"y":y,"width":width,"height":height, "color":tuple(current_color), "type":"platform"}
-                        level_data.append(rec)
-                        current_block = {}
-                        
-                elif current_tool == "delete":
-                    for bloc in platforms:
-                        rect = pygame.Rect(bloc.x,bloc.y,bloc.width,bloc.height)
-                        if rect.collidepoint(mouse_pos):
-                            platforms.remove(bloc)
-                            for rec in level_data:
-                                if rec == convert_to_level_data(bloc, "platform"):
-                                    level_data.remove(rec)
-                    for flag in flags:
-                        if flag.collidepoint(mouse_pos):
-                            flags.remove(flag)
-                            for rec in level_data:
-                                new_flag = convert_to_level_data(flag, "finish")
-                                if rec == new_flag:
-                                    level_data.remove(new_flag)
-                                    
-                elif current_tool == "place_flag":
-                    rec = {"x":mouse_pos[0],"y":mouse_pos[1],"width":finish_flag_size,"height":finish_flag_size, "color":tuple(pygame.Color(0,0,0)), "type":"finish"}
-                    level_data.append(rec)
-                    flags.append(rec)
+                
+                if not touching_ui:
+                    if current_tool == "draw":
+                        if current_block:
+                            
+                            endpos = mouse_pos
+                            startpos = current_block["start_pos"]
+                            current_block["end_pos"] = endpos
+                            width, height, x, y = generate_block(startpos, endpos)
+                            platforms.append(block.Block(current_color,width,height,x,y, space))
+                            
+                            rec = {"x":x,"y":y,"width":width,"height":height, "color":tuple(current_color), "type":"platform"}
+                            level_data.append(rec)
+                            current_block = {}
+                            
+                    elif current_tool == "delete":
+                        for bloc in platforms:
+                            rect = pygame.Rect(bloc.x,bloc.y,bloc.width,bloc.height)
+                            if rect.collidepoint(mouse_pos):
+                                platforms.remove(bloc)
+                                for rec in level_data:
+                                    if rec == convert_to_level_data(bloc, "platform"):
+                                        level_data.remove(rec)
+                        for flag in flags:
+                            if flag.collidepoint(mouse_pos):
+                                flags.remove(flag)
+                                for rec in level_data:
+                                    new_flag = convert_to_level_data(flag, "finish")
+                                    if rec == new_flag:
+                                        level_data.remove(new_flag)
+                                        
+                    elif current_tool == "place_flag":
+                        rec = pygame.Rect(mouse_pos[0], mouse_pos[1], finish_flag_size, finish_flag_size)
+                        level_data.append(convert_to_level_data(rec, "finish"))
+                        flags.append(rec)
 
         def on_delete(_): 
             level_editor.current_tool = "delete" 
@@ -167,12 +181,12 @@ def main(level):
         finish_button.draw(on_place_finish,click,screen,mouse_pos)
         draw.draw(on_draw,click,screen,mouse_pos)
         
-        if not paused:
-            pause_button.draw(level_editor.pause, click, screen, mouse_pos)
         if paused:
             screen.blit(pause_screen, (0,0)) 
             main_menu_button.draw(open_menu, click, screen, mouse_pos)
             quit_button.draw(exit, click, screen, mouse_pos)
+        else:
+            pause_button.draw(level_editor.pause, click, screen, mouse_pos)
         pygame.display.flip()
             
         
